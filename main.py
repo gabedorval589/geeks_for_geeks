@@ -12,5 +12,10 @@ def hello():
 @app.route('/hello/<name>')
 def hello_name(name):
     return f'Hello {name} !'  
+
+@app.route('/blog/<int:postID>')
+def show_blog(postID): 
+    return 'Blog Number %d' % postID
+
 if __name__=='__main__': 
    app.run(debug=True, host="0.0.0.0")
