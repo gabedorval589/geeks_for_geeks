@@ -6,6 +6,11 @@ app = Flask(__name__)   # Flask constructor
 @app.route('/')       
 def hello(): 
     return 'HELLO'
-  
+
+# A decorator used to tell the application
+# which URL is associated with the function
+@app.route('/hello/<name>')
+def hello_name(name):
+    return f'Hello {name} !'  
 if __name__=='__main__': 
    app.run(debug=True, host="0.0.0.0")
