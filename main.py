@@ -12,7 +12,7 @@ books = [
 ]
 
 # Configure SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/my_books.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///my_books.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Avoids a warning
 
 # Create SQLAlchemy instance
