@@ -1,6 +1,16 @@
-from flask import Flask, redirect, url_for     
+from flask import Flask, redirect, url_for, jsonify, request 
+from flask_sqlalchemy import SQLAlchemy
+
+
 app = Flask(__name__)   # Flask constructor 
   
+# Sample data
+books = [
+    {"id": 1, "title": "Concept of Physics", "author": "H.C Verma"},
+    {"id": 2, "title": "Gunahon ka Devta", "author": "Dharamvir Bharti"},
+    {"id": 3, "title": "Problems in General Physics", "author": "I.E Irodov"}
+]
+
 # A decorator used to tell the application 
 # which URL is associated function 
 @app.route('/')       
@@ -31,6 +41,38 @@ def hello_user(name):
         return redirect(url_for('hello_admin'))
     else:
         return redirect(url_for('hello_guest', guest=name))
+
+
+# Get all books
+@app.route('/books', methods=['GET'])
+def get_books():
+    return jsonify(books)
+
+# Get a single book by ID
+@app.route('/books/<int:book_id>', methods=['GET'])
+def get_book(book_id):
+    book = next((book for book in books if book["id"] == book_id), None)
+    return jsonify(book) if book else (jsonify({"error": "Book not found"}), 404)
+
+# Add a new book
+@app.route('/books', methods=['POST'])
+def add_book():
+    '''
+    curl http://192.168.1.190:5000/books -H "Content-Type: application/json" -d '{"id": 4, "title": "Mythology", "author": "Edith Hamilton"}'
+    '''
+    new_book = request.json
+    books.append(new_book)
+    return jsonify(new_book), 201
+
+# Delete a book
+@app.route('/books/<int:book_id>', methods=['DELETE'])
+def delete_book(book_id):
+    '''
+    curl http://192.168.1.190:5000/books/1 -H "Content-Type: application/json" -X "DELETE" 
+    '''
+    global books
+    books = [book for book in books if book["id"] != book_id]
+    return jsonify({"message": "Book deleted"})
 
 if __name__=='__main__': 
    app.run(debug=True, host="0.0.0.0")
