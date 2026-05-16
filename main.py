@@ -11,6 +11,23 @@ books = [
     {"id": 3, "title": "Problems in General Physics", "author": "I.E Irodov"}
 ]
 
+# Configure SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/my_books.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Avoids a warning
+
+# Create SQLAlchemy instance
+db = SQLAlchemy(app)
+
+class Books(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(20), unique=False, nullable=False)
+    author = db.Column(db.String(20), unique=False, nullable=False)
+
+    # repr method represents how one object of this datatable
+    # will look like
+    def __repr__(self):
+        return f"Name : {self.title}, Author: {self.author}"
+
 # A decorator used to tell the application 
 # which URL is associated function 
 @app.route('/')       
@@ -75,4 +92,6 @@ def delete_book(book_id):
     return jsonify({"message": "Book deleted"})
 
 if __name__=='__main__': 
+   with app.app_context():  # Needed for DB operations
+        db.create_all()      # Creates the database and tables
    app.run(debug=True, host="0.0.0.0")
